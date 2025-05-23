@@ -15,22 +15,22 @@ class BookSpider(scrapy.Spider):
     ]
 
     def parse(self, response: Response, **kwargs) -> Generator:
-        for product in response.css("product_pod"):
+        for product in response.css(".product_pod"):
             book_href = product.css("a::attr(href)").get()
             book_detail_url = response.urljoin(book_href)
             yield response.follow(book_detail_url, callback=self.parse_book)
 
-        next_page = response.css(".pager .next a::atr(href)").get()
+        next_page = response.css(".pager .next a::attr(href)").get()
         if next_page is not None:
             yield response.follow(next_page, callback=self.parse)
 
     @staticmethod
-    def get_avaliable_in_stock(response: Response) -> int:
+    def get_available_in_stock(response: Response) -> int:
         amount_text = (
             response.css(".product_main p.instock.availability::text")
             .getall()[-1].strip()
         )
-        match = re.search(r"\((\d+))", amount_text)
+        match = re.search(r"((\d+))", amount_text)
         return int(match.group(1)) if match else 0
 
     @staticmethod
@@ -47,7 +47,7 @@ class BookSpider(scrapy.Spider):
 
     def parse_book(self, response: Response) -> Generator:
         title = response.css("h1::text").get()
-        price = float(response.css(".price_color::text")).get().lstrip("£")
+        price = float(response.css(".price_color::text").get.lstrip("£"))
         category = response.css(".breadcrumb a::text").getall()[-1].strip()
         description = response.xpath(
             '//div[@id="product_description"]/following-sibling::p[1]/text()'
