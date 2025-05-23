@@ -47,7 +47,7 @@ class BookSpider(scrapy.Spider):
 
     def parse_book(self, response: Response) -> Generator:
         title = response.css("h1::text").get()
-        price = float(response.css(".price_color::text").get.lstrip("£"))
+        price = float(response.css(".price_color::text").get().lstrip("£"))
         category = response.css(".breadcrumb a::text").getall()[-1].strip()
         description = response.xpath(
             '//div[@id="product_description"]/following-sibling::p[1]/text()'
